@@ -1,0 +1,5 @@
+repositories:
+  clover2:
+    type: git
+    url: git@gitlab.com:coex2/clover2.git
+    version: feature/simulation

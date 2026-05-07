@@ -47,31 +47,8 @@ def launch_setup(context, *args, **kwargs):
         }.items(),
     )
 
-    px4_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution(
-                [
-                    get_package_share_directory(
-                        "px4_sim"
-                    ),
-                    "launch",
-                    "single.launch.py",
-                ]
-            )
-        ),
-        launch_arguments={
-            "use_sim_time": use_sim_time,
-            "log_level": log_level,
-            "params_file": params_file,
-            "name": name,
-            "world": world,
-            "model": model,
-        }.items(),
-    )
-
     return [
         spawn_model_cmd,
-        px4_cmd,
     ]
 
 

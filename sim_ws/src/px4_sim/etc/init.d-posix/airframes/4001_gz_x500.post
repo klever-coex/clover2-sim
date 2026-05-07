@@ -1,0 +1,4 @@
+#!/bin/sh
+
+param set-default SYS_HAS_GPS 0
+param set-default EKF2_GPS_CTRL 0

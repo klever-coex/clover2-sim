@@ -6,6 +6,9 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+
+ament_python_install_package(${PROJECT_NAME})
 
 include(ExternalProject)
 
@@ -20,10 +23,9 @@ add_custom_target(px4_build ALL
 )
 
 install(DIRECTORY
-  launch ${PX4_BUILD_DIR}/bin ${PX4_BUILD_DIR}/etc
+  ${PX4_BUILD_DIR}/bin ${PX4_BUILD_DIR}/etc etc
   DESTINATION share/${PROJECT_NAME}
 )
-
 
 ament_environment_hooks(cmake/99_setup.sh.in)
 

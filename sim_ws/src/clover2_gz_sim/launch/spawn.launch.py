@@ -4,11 +4,15 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
-    IncludeLaunchDescription,
+    LogInfo,
+    RegisterEventHandler,
+    TimerAction,
 )
+from launch.event_handlers import OnProcessExit
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from px4_sim.actions import PX4Sitl
 
 
 def generate_launch_description():
@@ -53,18 +57,30 @@ def generate_launch_description():
         description="Model name.",
     )
 
-    spawn_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution(
-                [FindPackageShare("ros_gz_sim"), "launch", "gz_spawn_model.launch.py"]
-            )
-        ),
-        launch_arguments={
-            "world": world,
-            "file": PathJoinSubstitution([pkg_clover2_gz_sim, "models", model, "model.sdf"]),
-            "entity_name": name,
-            "allow_renaming": "false"
-        }.items(),
+    # Spawn model to gazebo
+    spawn_cmd = Node(
+        package="ros_gz_sim",
+        executable="create",
+        output="screen",
+        parameters=[
+            {
+                "world": world,
+                "file": PathJoinSubstitution(
+                    [pkg_clover2_gz_sim, "models", model, "model.sdf"]
+                ),
+                "name": name,
+                "allow_renaming": False,
+            }
+        ],
+    )
+
+    px4_run_cmd = PX4Sitl(
+        name=name,
+        workdir="/tmp/clover2_px4_workdir",
+        extra_envs={
+            "PX4_GZ_STANDALONE": "1",
+            "PX4_GZ_MODEL_NAME": name,
+        },
     )
 
     return LaunchDescription(
@@ -76,5 +92,14 @@ def generate_launch_description():
             model_declare,
             name_declare,
             spawn_cmd,
+            RegisterEventHandler(
+                OnProcessExit(
+                    target_action=spawn_cmd,
+                    on_exit=[
+                        LogInfo(msg="Spawn finished"),
+                        TimerAction(period=3.0, actions=[px4_run_cmd]),
+                    ],
+                )
+            ),
         ]
     )

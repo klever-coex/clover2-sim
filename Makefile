@@ -8,7 +8,7 @@ export
 PROJECT_DIR ?= $(shell pwd)
 WORKSPACE_DIR ?= $(PROJECT_DIR)/sim_ws
 
-## help: Show this help message
+## Show this help message
 help:
 	@printf "Available targets:\n\n"
 	@awk '/^[a-zA-Z\-_0-9%:\\]+/ { \
@@ -24,15 +24,22 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST) | sort -u
 	@printf "\n"
 
-## clover2-install-repos: Install repos
-clover2-install-repos:
+## Install repos
+init-repos:
 	vcs import $(WORKSPACE_DIR)/src/third_party < $(WORKSPACE_DIR)/src/third_party/repos.yaml
 
-## build: Build simulation workspace
+## Recursive submodule init
+init-git:
+	git submodule update --init --recursive
+
+## Install project dependency
+init: init-git init-repos
+
+## Build simulation workspace
 build:
 	cd $(WORKSPACE_DIR)
 	colcon build --symlink-install
 
-## clean: Cleanup build artifacts
+## Cleanup build artifacts
 clean:
 	rm -rf $(WORKSPACE_DIR)/build $(WORKSPACE_DIR)/log $(WORKSPACE_DIR)/install

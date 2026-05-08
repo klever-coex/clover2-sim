@@ -24,6 +24,10 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST) | sort -u
 	@printf "\n"
 
+## Install dependency
+init-deps:
+	rosdep keys --ignore-src --from-paths $(WORKSPACE_DIR)/src
+
 ## Install repos
 init-repos:
 	vcs import $(WORKSPACE_DIR)/src/third_party < $(WORKSPACE_DIR)/src/third_party/repos.yaml
@@ -33,7 +37,7 @@ init-git:
 	git submodule update --init --recursive
 
 ## Install project dependency
-init: init-git init-repos
+init: init-git init-repos init-deps
 
 ## Build simulation workspace
 build:

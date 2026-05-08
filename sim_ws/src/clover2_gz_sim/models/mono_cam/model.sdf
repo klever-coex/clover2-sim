@@ -50,14 +50,14 @@
       <sensor name="imager" type="camera">
         <pose>0 0 0 0 0 0</pose>
         <camera>
-          <horizontal_fov>2.79252</horizontal_fov>
+          <horizontal_fov>1.8</horizontal_fov>
           <image>
             <width>640</width>
             <height>480</height>
           </image>
           <clip>
-            <near>0.1</near>
-            <far>3000</far>
+            <near>0.05</near>
+            <far>300</far>
           </clip>
         </camera>
         <always_on>1</always_on>

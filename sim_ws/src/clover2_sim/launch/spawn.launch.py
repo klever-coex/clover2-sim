@@ -47,8 +47,28 @@ def launch_setup(context, *args, **kwargs):
         }.items(),
     )
 
+    clover2_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution(
+                [
+                    get_package_share_directory("clover2"),
+                    "launch",
+                    "clover2.launch.py",
+                ]
+            )
+        ),
+        launch_arguments={
+            "use_sim_time": use_sim_time,
+            "log_level": log_level,
+            "params_file": params_file,
+            "fcu_conn": "udp",
+            "simulation": "true",
+        }.items(),
+    )
+
     return [
         spawn_model_cmd,
+        clover2_cmd,
     ]
 
 
@@ -81,7 +101,7 @@ def generate_launch_description():
 
     world_declare = DeclareLaunchArgument(
         "world",
-        default_value="simple",
+        default_value="clover2_aruco",
         description="Gazebo world.",
     )
 

@@ -45,7 +45,7 @@ def generate_launch_description():
 
     world_declare = DeclareLaunchArgument(
         "world",
-        default_value="simple",
+        default_value="clover2_aruco",
         description="Gazebo world.",
     )
 

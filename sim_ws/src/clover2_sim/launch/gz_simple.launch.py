@@ -28,7 +28,7 @@ def generate_launch_description():
     # Declare arguments
     use_sim_time_declare = DeclareLaunchArgument(
         "use_sim_time",
-        default_value="true",
+        default_value="false",
         description="Use simulation (Gazebo) clock if true",
     )
 
@@ -51,7 +51,7 @@ def generate_launch_description():
 
     world_declare = DeclareLaunchArgument(
         "world",
-        default_value="aruco",
+        default_value="clover2_aruco",
         description="Gazebo world.",
     )
 

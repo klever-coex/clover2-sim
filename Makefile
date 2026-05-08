@@ -38,7 +38,7 @@ init: init-git init-repos
 ## Build simulation workspace
 build:
 	cd $(WORKSPACE_DIR)
-	colcon build --symlink-install
+	colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 ## Cleanup build artifacts
 clean:

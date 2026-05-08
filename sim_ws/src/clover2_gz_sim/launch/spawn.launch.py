@@ -70,6 +70,12 @@ def generate_launch_description():
                 ),
                 "name": name,
                 "allow_renaming": False,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 0.0,
+                "R": 0.0,
+                "P": 0.0,
+                "Y": 0.0,
             }
         ],
     )
@@ -97,7 +103,7 @@ def generate_launch_description():
                     target_action=spawn_cmd,
                     on_exit=[
                         LogInfo(msg="Spawn finished"),
-                        TimerAction(period=3.0, actions=[px4_run_cmd]),
+                        TimerAction(period=1.0, actions=[px4_run_cmd]),
                     ],
                 )
             ),

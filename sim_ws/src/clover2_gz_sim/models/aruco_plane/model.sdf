@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
 
- <model name='aruco_box'>
+ <model name='aruco_plane'>
       <pose>0 0 0 0 -0 0</pose>
       <static>true</static>
       <link name='link'>
@@ -17,10 +17,10 @@
           </inertia>
           <pose>0 0 0 0 -0 0</pose>
         </inertial>
-        <collision name='collision'>
+        <!-- <collision name='collision'>
           <geometry>
             <box>
-              <size>0.5 0.5 0.5</size>
+              <size>3.4 3.4 0.005</size>
             </box>
           </geometry>
           <surface>
@@ -36,12 +36,12 @@
             </friction>
           </surface>
           <max_contacts>10</max_contacts>
-        </collision>
-        <visual name='aruco_box_mesh'>
+        </collision> -->
+        <visual name='aruco_plane_mesh'>
           <geometry>
             <mesh>
-                <uri>model://aruco_box/model.dae</uri>
-                <!-- <scale>0.5 0.5 0.5</scale> -->
+                <uri>model://aruco_plane/aruco_plane.glb</uri>
+                <scale>0.5 0.5 0.5</scale>
             </mesh>
           </geometry>
         </visual>

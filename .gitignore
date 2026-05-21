@@ -5,6 +5,8 @@
 /.vscode
 /.zed
 
+.cache
+
 *.DS_Store
 
 *.pyc

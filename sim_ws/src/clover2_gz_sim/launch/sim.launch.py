@@ -7,6 +7,7 @@ from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
 )
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import (
     LaunchConfiguration,
@@ -78,6 +79,20 @@ def generate_launch_description():
         }.items(),
     )
 
+    gz_common_bridge_cmd = Node(
+        condition=IfCondition(use_sim_time),
+        package="ros_gz_bridge",
+        executable="parameter_bridge",
+        name="gz_common_bridge",
+        parameters=[
+            {
+                "config_file": os.path.join(
+                    pkg_clover2_gz_sim, "config", "gz_common_bridge.yaml"
+                )
+            }
+        ],
+    )
+
     return LaunchDescription(
         [
             use_sim_time_declare,
@@ -86,6 +101,7 @@ def generate_launch_description():
             world_declare,
             gui_declare,
             gazebo_cmd,
+            # gz_common_bridge_cmd,
         ]
     )
 

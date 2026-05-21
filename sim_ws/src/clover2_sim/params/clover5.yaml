@@ -4,7 +4,9 @@
 
 /**/aruco_tracker:
   ros__parameters:
-    tracking: "base_link"
+    frame_id: "base_link"
+    tf.send: false
+    tf.child_frame_id: "vision_estimate"
 
 /**/main_camera/camera:
   ros__parameters:

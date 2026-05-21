@@ -3,6 +3,7 @@
 /sim_ws/log
 
 /.vscode
+/.zed
 
 *.DS_Store
 

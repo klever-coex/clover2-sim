@@ -7,7 +7,8 @@ SITL workspace for [Clover2](https://github.com/klever-coex/clover2) — ROS 2 a
 
 ## Quick start
 
-> **⚠️ Prerequisites:** ROS 2 Jazzy and Gazebo Harmonic must be installed on the system before building.
+> **Warning**
+> ROS 2 Jazzy and Gazebo Harmonic must be installed on the system before building.
 
 ```bash
 git clone git@github.com:klever-coex/clover2-sim.git

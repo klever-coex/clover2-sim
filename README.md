@@ -31,6 +31,7 @@ make build   # colcon build --symlink-install
 ```bash
 # Build
 make build
+## or
 colcon build --symlink-install --cmake-args -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 # Build single package
@@ -41,12 +42,6 @@ colcon build --packages-select px4_sim
 
 # Launch simulation (Gazebo + PX4 SITL + Clover2 stack)
 ros2 launch clover2_sim gz_simple.launch.py
-
-# Headless (no GUI)
-ros2 launch clover2_sim gz_simple.launch.py gui:=false
-
-# Use a different world
-ros2 launch clover2_sim gz_simple.launch.py world:=clover2_aruco
 ```
 
 See `Makefile` for all targets (`init`, `build`, `clean`, `init-git`, `init-repos`, `init-deps`).

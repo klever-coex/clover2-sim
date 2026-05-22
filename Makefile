@@ -1,4 +1,4 @@
-.PHONY: help clean build
+.PHONY: help clean build install-ros install-gz
 .DEFAULT_GOAL := help
 .ONESHELL:
 
@@ -23,6 +23,17 @@ help:
 	} \
 	{ lastLine = $$0 }' $(MAKEFILE_LIST) | sort -u
 	@printf "\n"
+
+## Install ROS 2 system dependencies
+install-ros:
+	scripts/install/ros.sh
+
+## Install Gazebo system dependencies
+install-gz:
+	scripts/install/gz.sh
+
+## Install all system dependencies
+install-all: install-ros install-gz
 
 ## Install dependency
 init-deps:

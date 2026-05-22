@@ -13,7 +13,7 @@ ok()    { printf "${GREEN}[OK]${NC}   %s\n" "$*"; }
 warn()  { printf "${YELLOW}[WARN]${NC} %s\n" "$*"; }
 error() { printf "${RED}[ERROR]${NC} %s\n" "$*"; }
 
-ROS_DISTRO="jazzy"
+ROS_DISTRO="humble"
 
 info "Setting up locale"
 sudo apt update && sudo apt install -y locales

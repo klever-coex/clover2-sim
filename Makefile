@@ -26,7 +26,7 @@ help:
 
 ## Install dependency
 init-deps:
-	rosdep keys --ignore-src --from-paths $(WORKSPACE_DIR)/src
+	rosdep install --ignore-src --from-paths $(WORKSPACE_DIR)/src
 
 ## Install repos
 init-repos:

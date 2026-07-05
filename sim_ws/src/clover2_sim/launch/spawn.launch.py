@@ -8,7 +8,10 @@ from launch.actions import (
     IncludeLaunchDescription,
     OpaqueFunction,
 )
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.launch_description_sources import (
+    AnyLaunchDescriptionSource,
+    PythonLaunchDescriptionSource,
+)
 from launch.substitutions import (
     LaunchConfiguration,
     PathJoinSubstitution,
@@ -48,12 +51,12 @@ def launch_setup(context, *args, **kwargs):
     )
 
     clover2_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
+        AnyLaunchDescriptionSource(
             PathJoinSubstitution(
                 [
-                    get_package_share_directory("clover2"),
+                    get_package_share_directory("clover2_bringup"),
                     "launch",
-                    "clover2.launch.py",
+                    "klever5.launch.xml",
                 ]
             )
         ),
@@ -61,8 +64,9 @@ def launch_setup(context, *args, **kwargs):
             "use_sim_time": use_sim_time,
             "log_level": log_level,
             "params_file": params_file,
-            "fcu_conn": "udp",
-            "simulation": "true",
+            "fcu_bridge.fcu_conn": "udp",
+            "localization.map_server.map_filename": "simulation.yaml",
+            "sensing_pkg": "clover2_" + sim_type.perform(context) + "_sim",
         }.items(),
     )
 
@@ -88,7 +92,7 @@ def generate_launch_description():
 
     params_file_declare = DeclareLaunchArgument(
         "params_file",
-        default_value=PathJoinSubstitution([pkg_clover2_sim, "params", "clover5.yaml"]),
+        default_value=PathJoinSubstitution([pkg_clover2_sim, "params", "klever5.yaml"]),
         description="Log level for all nodes",
     )
 

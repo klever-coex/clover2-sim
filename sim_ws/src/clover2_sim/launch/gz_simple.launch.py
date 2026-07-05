@@ -38,7 +38,7 @@ def generate_launch_description():
 
     params_file_declare = DeclareLaunchArgument(
         "params_file",
-        default_value=PathJoinSubstitution([pkg_clover2_sim, "params", "clover5.yaml"]),
+        default_value=PathJoinSubstitution([pkg_clover2_sim, "params", "klever5.yaml"]),
         description="Log level for all nodes",
     )
 

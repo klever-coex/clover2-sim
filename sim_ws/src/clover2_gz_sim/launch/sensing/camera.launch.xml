@@ -1,20 +1,4 @@
 <launch>
-    <!--
-      Camera bridge (Gazebo → ROS2) for simulation.
-      Mirrors clover2_bringup/launch/sensing/camera.launch.xml exactly:
-      same arguments, same names, same namespaces, same composition logic.
-      Only difference: instead of camera_ros::camera_node it runs
-      ros_gz_bridge (standalone or RosGzBridge composable) to bridge
-      Gazebo camera sensor topics → ROS2.
-
-      Resulting ROS2 topics (same as real robot):
-        - <ns>/<camera_name>/image_raw   (standalone)
-        - <ns>/<camera_name>/camera_info (standalone)
-        - <ns>/camera/image_raw          (composable)
-        - <ns>/camera/camera_info        (composable)
-    -->
-
-    <!-- === Arguments: identical to clover2_bringup camera.launch.xml === -->
     <arg
         name="camera_name"
         default="camera"
@@ -33,14 +17,12 @@
         description="If true, load RosGzBridge as composable node into existing container"
     />
 
-    <!-- === Simulation-specific arguments === -->
     <arg name="world_name" default="clover2_aruco" description="Gazebo world name" />
     <arg name="model_name" default="px4" description="Model name in Gazebo" />
     <arg name="camera_link" default="camera_link" description="Link carrying the camera sensor in the SDF model" />
     <arg name="camera_sensor" default="imager" description="Camera sensor name in the SDF model" />
     <arg name="use_sim_time" default="true" description="Use simulation (Gazebo) clock" />
 
-    <!-- Build Gazebo topic paths -->
     <let
         name="gz_image_topic"
         value="/world/$(var world_name)/model/$(var model_name)/link/$(var camera_link)/sensor/$(var camera_sensor)/image"
@@ -50,10 +32,6 @@
         value="/world/$(var world_name)/model/$(var model_name)/link/$(var camera_link)/sensor/$(var camera_sensor)/camera_info"
     />
 
-    <!--
-      Standalone bridge (use_composition=false, default).
-      Mirrors: <node pkg="camera_ros" exec="camera_node" name="$(var camera_name)" ...>
-    -->
     <node
         pkg="ros_gz_bridge"
         exec="parameter_bridge"
@@ -65,7 +43,6 @@
 
         <param name="bridge_names" value="[camera_image, camera_info]" />
 
-        <!-- Camera image: Gazebo → ROS ~/image_raw -->
         <param name="bridges.camera_image.ros_topic_name" value="~/image_raw" />
         <param name="bridges.camera_image.gz_topic_name" value="$(var gz_image_topic)" />
         <param name="bridges.camera_image.ros_type_name" value="sensor_msgs/msg/Image" />
@@ -73,7 +50,6 @@
         <param name="bridges.camera_image.direction" value="GZ_TO_ROS" />
         <param name="bridges.camera_image.frame_id" value="$(var frame_id)" />
 
-        <!-- Camera info: Gazebo → ROS ~/camera_info -->
         <param name="bridges.camera_info.ros_topic_name" value="~/camera_info" />
         <param name="bridges.camera_info.gz_topic_name" value="$(var gz_camera_info_topic)" />
         <param name="bridges.camera_info.ros_type_name" value="sensor_msgs/msg/CameraInfo" />
@@ -82,13 +58,6 @@
         <param name="bridges.camera_info.frame_id" value="$(var frame_id)" />
     </node>
 
-    <!--
-      Composable bridge (use_composition=true).
-      Mirrors: <load_composable_node target="$(var container_name)">
-                 <composable_node pkg="camera_ros" plugin="camera::CameraNode"
-                                  name="camera" namespace="$(var ns)" ...>
-      Container is NOT created here — expected to already exist, same as in clover2_bringup.
-    -->
     <load_composable_node target="$(var container_name)">
         <composable_node
             pkg="ros_gz_bridge"
@@ -101,7 +70,6 @@
 
             <param name="bridge_names" value="[camera_image, camera_info]" />
 
-            <!-- Camera image: Gazebo → ROS ~/image_raw -->
             <param name="bridges.camera_image.ros_topic_name" value="~/image_raw" />
             <param name="bridges.camera_image.gz_topic_name" value="$(var gz_image_topic)" />
             <param name="bridges.camera_image.ros_type_name" value="sensor_msgs/msg/Image" />
@@ -109,7 +77,6 @@
             <param name="bridges.camera_image.direction" value="GZ_TO_ROS" />
             <param name="bridges.camera_image.frame_id" value="$(var frame_id)" />
 
-            <!-- Camera info: Gazebo → ROS ~/camera_info -->
             <param name="bridges.camera_info.ros_topic_name" value="~/camera_info" />
             <param name="bridges.camera_info.gz_topic_name" value="$(var gz_camera_info_topic)" />
             <param name="bridges.camera_info.ros_type_name" value="sensor_msgs/msg/CameraInfo" />

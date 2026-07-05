@@ -60,3 +60,25 @@
 /**/web_video_server:
   ros__parameters:
     port: 8081
+
+/**/mavros/time:
+  ros__parameters:
+    time_ref_source: "fcu"
+    timesync_mode: MAVLINK
+    system_time_rate: 0.0
+    timesync_rate: 10.0
+
+/**/mavros/distance_sensor:
+  ros__parameters:
+    config: |
+      distance_sensor/filtred:
+        id: 0
+        frame_id: "main_camera_link"
+        orientation: "PITCH_270"
+        field_of_view: 0.0
+      distance_sensor/rangefinder:
+        subscriber: true
+        id: 1
+        frame_id: "main_camera_link"
+        orientation: "PITCH_270"
+        field_of_view: 0.0

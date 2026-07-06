@@ -1,6 +1,11 @@
----
 - ros_topic_name: "/clock"
   gz_topic_name: "/clock"
   ros_type_name: "rosgraph_msgs/msg/Clock"
   gz_type_name: "gz.msgs.Clock"
   direction: GZ_TO_ROS
+- ros_topic_name: "/mavros/distance_sensor/rangefinder"
+  gz_topic_name: "/world/clover2_aruco/model/px4/link/rangefinder_link/sensor/rangefinder/scan"
+  ros_type_name: "sensor_msgs/msg/Range"
+  gz_type_name: "gz.msgs.LaserScan"
+  direction: GZ_TO_ROS
+  frame_id: main_camera_link

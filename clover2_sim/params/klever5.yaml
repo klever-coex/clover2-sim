@@ -64,9 +64,9 @@
 /**/mavros/time:
   ros__parameters:
     time_ref_source: "fcu"
-    timesync_mode: MAVLINK
+    timesync_mode: NONE
     system_time_rate: 0.0
-    timesync_rate: 10.0
+    timesync_rate: 0.0
 
 /**/mavros/distance_sensor:
   ros__parameters:

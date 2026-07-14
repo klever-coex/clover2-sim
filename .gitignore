@@ -1,6 +1,6 @@
-/sim_ws/build
-/sim_ws/install
-/sim_ws/log
+/build
+/install
+/log
 
 /.vscode
 /.zed
@@ -11,6 +11,3 @@
 
 *.pyc
 __pycache__
-
-/sim_ws/src/third_party/*
-!/sim_ws/src/third_party/repos.yaml

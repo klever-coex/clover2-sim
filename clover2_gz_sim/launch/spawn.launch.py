@@ -4,9 +4,9 @@ from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
+    ExecuteProcess,
     LogInfo,
     RegisterEventHandler,
-    TimerAction,
 )
 from launch.event_handlers import OnProcessExit
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
@@ -89,6 +89,8 @@ def generate_launch_description():
         },
     )
 
+    wait_spawn = ExecuteProcess(cmd=["sleep", "5"])
+
     return LaunchDescription(
         [
             use_sim_time_declare,
@@ -101,9 +103,15 @@ def generate_launch_description():
             RegisterEventHandler(
                 OnProcessExit(
                     target_action=spawn_cmd,
+                    on_exit=[wait_spawn],
+                )
+            ),
+            RegisterEventHandler(
+                OnProcessExit(
+                    target_action=wait_spawn,
                     on_exit=[
                         LogInfo(msg="Spawn finished"),
-                        TimerAction(period=1.0, actions=[px4_run_cmd]),
+                        px4_run_cmd,
                     ],
                 )
             ),

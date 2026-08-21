@@ -7,3 +7,5 @@ param set-default EKF2_EV_CTRL 11
 param set-default EKF2_HGT_REF 2
 
 param set-default COM_POS_FS_EPH 50.0
+
+param set-default NAV_DLL_ACT 0

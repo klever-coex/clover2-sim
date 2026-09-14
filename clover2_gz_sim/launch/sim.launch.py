@@ -63,6 +63,7 @@ def generate_launch_description():
         ".sdf",
         " -v 2",
         " -r",
+        " --render-engine ogre",
         __headless_rendering(gui),
     ]
 

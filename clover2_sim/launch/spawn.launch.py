@@ -25,7 +25,6 @@ def launch_setup(context, *args, **kwargs):
     params_file = LaunchConfiguration("params_file")
     sim_type = LaunchConfiguration("sim_type")
     world = LaunchConfiguration("world")
-    model = LaunchConfiguration("model")
     name = LaunchConfiguration("name")
 
     spawn_model_cmd = IncludeLaunchDescription(
@@ -46,7 +45,6 @@ def launch_setup(context, *args, **kwargs):
             "params_file": params_file,
             "name": name,
             "world": world,
-            "model": model,
         }.items(),
     )
 
@@ -109,11 +107,6 @@ def generate_launch_description():
         description="Gazebo world.",
     )
 
-    model_declare = DeclareLaunchArgument(
-        "model",
-        description="Select sim model.",
-    )
-
     name_declare = DeclareLaunchArgument(
         "name",
         default_value="px4",
@@ -127,7 +120,6 @@ def generate_launch_description():
             params_file_declare,
             sim_type_declare,
             world_declare,
-            model_declare,
             name_declare,
             OpaqueFunction(function=launch_setup),
         ]

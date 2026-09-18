@@ -23,7 +23,13 @@ add_custom_target(px4_build ALL
 )
 
 install(DIRECTORY
-  ${PX4_BUILD_DIR}/bin ${PX4_BUILD_DIR}/etc etc
+  ${PX4_BUILD_DIR}/bin/
+  DESTINATION share/${PROJECT_NAME}/bin
+  USE_SOURCE_PERMISSIONS
+)
+
+install(DIRECTORY
+  ${PX4_BUILD_DIR}/etc etc
   DESTINATION share/${PROJECT_NAME}
 )
 

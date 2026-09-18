@@ -23,7 +23,6 @@ def generate_launch_description():
     params_file = LaunchConfiguration("params_file")
     sim_type = LaunchConfiguration("sim_type")
     world = LaunchConfiguration("world")
-    model = LaunchConfiguration("model")
 
     # Declare arguments
     use_sim_time_declare = DeclareLaunchArgument(
@@ -55,12 +54,6 @@ def generate_launch_description():
         description="Gazebo world.",
     )
 
-    model_declare = DeclareLaunchArgument(
-        "model",
-        default_value="x500_mono_cam_down",
-        description="Select sim model.",
-    )
-
     sim_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution([pkg_clover2_sim, "launch", "sim.launch.py"])
@@ -84,7 +77,6 @@ def generate_launch_description():
             "params_file": params_file,
             "sim_type": sim_type,
             "world": world,
-            "model": model,
         }.items(),
     )
 
@@ -95,7 +87,6 @@ def generate_launch_description():
             params_file_declare,
             sim_type_declare,
             world_declare,
-            model_declare,
             sim_cmd,
             spawn_cmd,
         ]

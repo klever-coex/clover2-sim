@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+﻿<?xml version="1.0" encoding="UTF-8" ?>
 <sdf version="1.9">
   <world name="clover2_aruco">
 
@@ -31,13 +31,17 @@
             name="gz::sim::systems::Magnetometer"
         />
   <plugin filename="gz-sim-sensors-system" name="gz::sim::systems::Sensors">
-    <render_engine>ogre2</render_engine>
+    <render_engine>ogre</render_engine>
   </plugin>
 
-    <physics type="ode">
+    <physics type="dart">
       <max_step_size>0.004</max_step_size>
       <real_time_factor>1.0</real_time_factor>
       <real_time_update_rate>250</real_time_update_rate>
+      <dart>
+        <!-- RaycastData requires DART's Bullet collision detector. -->
+        <collision_detector>bullet</collision_detector>
+      </dart>
     </physics>
     <gravity>0 0 -9.8</gravity>
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
@@ -52,11 +56,13 @@
       <static>true</static>
       <link name="link">
         <collision name="collision">
+          <pose>0 0 -0.05 0 0 0</pose>
           <geometry>
-            <plane>
-              <normal>0 0 1</normal>
-              <size>1 1</size>
-            </plane>
+            <!-- Bullet raycasts against plane shapes are unreliable. The top
+                 of this thin box is at z=0, matching the original plane. -->
+            <box>
+              <size>100 100 0.1</size>
+            </box>
           </geometry>
           <surface>
             <friction>

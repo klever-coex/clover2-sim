@@ -7,6 +7,24 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
+find_package(gz-sim8 REQUIRED)
+
+add_library(clover2-rangefinder-system SHARED
+  src/rangefinder_system.cpp
+)
+target_compile_features(clover2-rangefinder-system PUBLIC cxx_std_17)
+target_link_libraries(clover2-rangefinder-system
+  PRIVATE gz-sim8::gz-sim8
+)
+
+install(
+  TARGETS clover2-rangefinder-system
+  LIBRARY DESTINATION lib
+)
+
+ament_environment_hooks(
+  env-hooks/gz_sim_system_plugin_path.dsv
+)
 
 install(
   DIRECTORY worlds launch models config

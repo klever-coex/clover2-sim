@@ -29,7 +29,7 @@ install(DIRECTORY
 )
 
 install(DIRECTORY
-  ${PX4_BUILD_DIR}/etc etc
+  ${PX4_BUILD_DIR}/etc
   DESTINATION share/${PROJECT_NAME}
 )
 

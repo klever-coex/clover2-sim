@@ -24,6 +24,8 @@ def generate_launch_description():
     params_file = LaunchConfiguration("params_file")
     world = LaunchConfiguration("world")
     name = LaunchConfiguration("name")
+    enable_main_camera = LaunchConfiguration("enable_main_camera")
+    enable_front_camera = LaunchConfiguration("enable_front_camera")
 
     # Declare arguments
     use_sim_time_declare = DeclareLaunchArgument(
@@ -50,20 +52,40 @@ def generate_launch_description():
         "name",
         description="Model name.",
     )
+    equipment_declare = [
+        DeclareLaunchArgument(
+            "enable_main_camera",
+            default_value="true",
+            choices=["true", "false"],
+        ),
+        DeclareLaunchArgument(
+            "enable_front_camera",
+            default_value="false",
+            choices=["true", "false"],
+        ),
+    ]
 
     generate_sdf_cmd = ExecuteProcess(
         cmd=[
             "bash",
             "-c",
-            "mkdir -p /tmp/clover2_gz_models && "
-            "xacro "
-            + os.path.join(
-                pkg_clover2_description, "gazebo", "klever5", "klever5.sdf.xacro"
-            )
-            + " description_share:="
-            + pkg_clover2_description
-            + " > "
-            + generated_sdf,
+            [
+                "mkdir -p /tmp/clover2_gz_models && xacro ",
+                os.path.join(
+                    pkg_clover2_description,
+                    "gazebo",
+                    "klever5",
+                    "klever5.sdf.xacro",
+                ),
+                " description_share:=",
+                pkg_clover2_description,
+                " enable_main_camera:=",
+                enable_main_camera,
+                " enable_front_camera:=",
+                enable_front_camera,
+                " > ",
+                generated_sdf,
+            ],
         ],
         output="screen",
     )
@@ -84,7 +106,7 @@ def generate_launch_description():
                 "z": 0.5,
                 "R": 0.0,
                 "P": 0.0,
-                "Y": 0.0,
+                "Y": 3.141592653589793,
             }
         ],
     )
@@ -109,6 +131,7 @@ def generate_launch_description():
             params_file_declare,
             world_declare,
             name_declare,
+            *equipment_declare,
             RegisterEventHandler(
                 OnProcessExit(
                     target_action=generate_sdf_cmd,

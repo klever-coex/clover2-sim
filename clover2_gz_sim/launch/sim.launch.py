@@ -1,32 +1,59 @@
 import os
-import pathlib
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
+    OpaqueFunction,
 )
-from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import (
+    EnvironmentVariable,
     LaunchConfiguration,
     PathJoinSubstitution,
-    PythonExpression,
 )
-from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 
-def generate_launch_description():
+def launch_gazebo(context, *args, **kwargs):
     pkg_clover2_gz_sim = get_package_share_directory("clover2_gz_sim")
-
-    # Reading arguments
     use_sim_time = LaunchConfiguration("use_sim_time")
     log_level = LaunchConfiguration("log_level")
-    params_file = LaunchConfiguration("params_file")
     world = LaunchConfiguration("world")
-    gui = LaunchConfiguration("gui")
+    gui = LaunchConfiguration("gui").perform(context)
+    render_engine = LaunchConfiguration("render_engine").perform(context)
+
+    gz_args = [
+        os.path.join(pkg_clover2_gz_sim, "worlds/"),
+        world,
+        ".sdf",
+        " -v 2",
+        " -r",
+    ]
+    if gui == "false":
+        gz_args += [" --headless-rendering", " -s"]
+    if render_engine:
+        gz_args += [" --render-engine ", render_engine]
+
+    gazebo_cmd = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution(
+                [FindPackageShare("ros_gz_sim"), "launch", "gz_sim.launch.py"]
+            )
+        ),
+        launch_arguments={
+            "use_sim_time": use_sim_time,
+            "log_level": log_level,
+            "gz_args": gz_args,
+        }.items(),
+    )
+
+    return [gazebo_cmd]
+
+
+def generate_launch_description():
+    use_sim_time = LaunchConfiguration("use_sim_time")
 
     # Declare arguments
     use_sim_time_declare = DeclareLaunchArgument(
@@ -57,26 +84,10 @@ def generate_launch_description():
         description='Set to "false" to run headless.',
     )
 
-    gz_args = [
-        os.path.join(pkg_clover2_gz_sim, "worlds/"),
-        world,
-        ".sdf",
-        " -v 2",
-        " -r",
-        __headless_rendering(gui),
-    ]
-
-    gazebo_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            PathJoinSubstitution(
-                [FindPackageShare("ros_gz_sim"), "launch", "gz_sim.launch.py"]
-            )
-        ),
-        launch_arguments={
-            "use_sim_time": use_sim_time,
-            "log_level": log_level,
-            "gz_args": gz_args,
-        }.items(),
+    render_engine_declare = DeclareLaunchArgument(
+        "render_engine",
+        default_value=EnvironmentVariable("CLOVER2_GZ_SIM_RENDER_ENGINE", default_value=""),
+        description="Gazebo rendering engine override (defaults to Gazebo configuration).",
     )
 
     gz_common_bridge_cmd = IncludeLaunchDescription(
@@ -97,13 +108,8 @@ def generate_launch_description():
             # params_file_declare,
             world_declare,
             gui_declare,
-            gazebo_cmd,
+            render_engine_declare,
+            OpaqueFunction(function=launch_gazebo),
             gz_common_bridge_cmd,
         ]
     )
-
-
-def __headless_rendering(gui):
-    cmd = ['"" if "true" == "', gui, '" else "--headless-rendering -s"']
-    py_cmd = PythonExpression(cmd)
-    return py_cmd

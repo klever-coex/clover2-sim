@@ -114,7 +114,7 @@ def generate_launch_description():
     px4_run_cmd = PX4Sitl(
         name=name,
         workdir="/tmp/clover2_px4_workdir",
-        autostart="4001",
+        autostart="4022",
         extra_envs={
             "PX4_GZ_STANDALONE": "1",
             "PX4_GZ_MODEL_NAME": name,

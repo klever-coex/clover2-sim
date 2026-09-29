@@ -33,6 +33,12 @@ install(DIRECTORY
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(DIRECTORY
+  etc/
+  DESTINATION share/${PROJECT_NAME}/etc
+  USE_SOURCE_PERMISSIONS
+)
+
 ament_environment_hooks(cmake/99_setup.sh.in)
 
 ament_export_libraries(px4)

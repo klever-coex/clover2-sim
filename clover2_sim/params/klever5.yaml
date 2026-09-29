@@ -43,7 +43,7 @@
 #     ExposureTime: 1000
 #     FrameDurationLimits: [33333, 33333]
 
-/**/main_camera/feat_detector:
+/**/main_camera/cam_feature:
   ros__parameters:
     feature_plugins: ["aruco"]
     aruco:

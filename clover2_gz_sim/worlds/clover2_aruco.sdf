@@ -100,12 +100,12 @@
     <include>
       <uri>model://aruco_plane</uri>
       <name>aruco_plane</name>
-      <pose>-1.7 -1.7 0.08 1.57079632 0 -1.57079632</pose>
+      <pose>-1.7 -1.7 0.005 1.57079632 0 -1.57079632</pose>
     </include>
     <include>
       <uri>model://football_map</uri>
       <name>football_map</name>
-      <pose>0 0 -0.03 1.57079632 0 0</pose>
+      <pose>0 0 -0.095 1.57079632 0 0</pose>
     </include>
   </world>
 </sdf>

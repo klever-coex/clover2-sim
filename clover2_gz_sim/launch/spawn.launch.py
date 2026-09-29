@@ -9,22 +9,23 @@ from launch.actions import (
     RegisterEventHandler,
 )
 from launch.event_handlers import OnProcessExit
-from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-from launch_ros.substitutions import FindPackageShare
 from px4_sim.actions import PX4Sitl
 
 
 def generate_launch_description():
-    pkg_clover2_gz_sim = get_package_share_directory("clover2_gz_sim")
+    pkg_clover2_description = get_package_share_directory("clover2_description")
+    generated_sdf = "/tmp/clover2_gz_models/klever5.sdf"
 
     # Reading arguments
     use_sim_time = LaunchConfiguration("use_sim_time")
     log_level = LaunchConfiguration("log_level")
     params_file = LaunchConfiguration("params_file")
     world = LaunchConfiguration("world")
-    model = LaunchConfiguration("model")
     name = LaunchConfiguration("name")
+    enable_main_camera = LaunchConfiguration("enable_main_camera")
+    enable_front_camera = LaunchConfiguration("enable_front_camera")
 
     # Declare arguments
     use_sim_time_declare = DeclareLaunchArgument(
@@ -47,17 +48,49 @@ def generate_launch_description():
         description="Gazebo world.",
     )
 
-    model_declare = DeclareLaunchArgument(
-        "model",
-        description="Select sim model.",
-    )
-
     name_declare = DeclareLaunchArgument(
         "name",
         description="Model name.",
     )
+    equipment_declare = [
+        DeclareLaunchArgument(
+            "enable_main_camera",
+            default_value="true",
+            choices=["true", "false"],
+        ),
+        DeclareLaunchArgument(
+            "enable_front_camera",
+            default_value="false",
+            choices=["true", "false"],
+        ),
+    ]
 
-    # Spawn model to gazebo
+    generate_sdf_cmd = ExecuteProcess(
+        cmd=[
+            "bash",
+            "-c",
+            [
+                "mkdir -p /tmp/clover2_gz_models && xacro ",
+                os.path.join(
+                    pkg_clover2_description,
+                    "gazebo",
+                    "klever5",
+                    "klever5.sdf.xacro",
+                ),
+                " description_share:=",
+                pkg_clover2_description,
+                " enable_main_camera:=",
+                enable_main_camera,
+                " enable_front_camera:=",
+                enable_front_camera,
+                " > ",
+                generated_sdf,
+            ],
+        ],
+        output="screen",
+    )
+
+    # Spawn the SDF generated from clover2_description, not a duplicate model.
     spawn_cmd = Node(
         package="ros_gz_sim",
         executable="create",
@@ -65,9 +98,7 @@ def generate_launch_description():
         parameters=[
             {
                 "world": world,
-                "file": PathJoinSubstitution(
-                    [pkg_clover2_gz_sim, "models", model, "model.sdf"]
-                ),
+                "file": generated_sdf,
                 "name": name,
                 "allow_renaming": False,
                 "x": 0.0,
@@ -75,7 +106,7 @@ def generate_launch_description():
                 "z": 0.5,
                 "R": 0.0,
                 "P": 0.0,
-                "Y": 0.0,
+                "Y": 3.141592653589793,
             }
         ],
     )
@@ -83,9 +114,11 @@ def generate_launch_description():
     px4_run_cmd = PX4Sitl(
         name=name,
         workdir="/tmp/clover2_px4_workdir",
+        autostart="4022",
         extra_envs={
             "PX4_GZ_STANDALONE": "1",
             "PX4_GZ_MODEL_NAME": name,
+            "PX4_SIM_MODEL": "klever5",
         },
     )
 
@@ -97,9 +130,14 @@ def generate_launch_description():
             log_level_declare,
             params_file_declare,
             world_declare,
-            model_declare,
             name_declare,
-            spawn_cmd,
+            *equipment_declare,
+            RegisterEventHandler(
+                OnProcessExit(
+                    target_action=generate_sdf_cmd,
+                    on_exit=[spawn_cmd],
+                )
+            ),
             RegisterEventHandler(
                 OnProcessExit(
                     target_action=spawn_cmd,
@@ -109,11 +147,9 @@ def generate_launch_description():
             RegisterEventHandler(
                 OnProcessExit(
                     target_action=wait_spawn,
-                    on_exit=[
-                        LogInfo(msg="Spawn finished"),
-                        px4_run_cmd,
-                    ],
+                    on_exit=[LogInfo(msg="Spawn finished"), px4_run_cmd],
                 )
             ),
+            generate_sdf_cmd,
         ]
     )

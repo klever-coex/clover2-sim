@@ -104,6 +104,6 @@ def generate_launch_description():
 
 
 def __headless_rendering(gui):
-    cmd = ['"" if "true" == "', gui, '" else "--headless-rendering -s"']
+    cmd = ['"" if "true" == "', gui, '" else " --headless-rendering -s"']
     py_cmd = PythonExpression(cmd)
     return py_cmd

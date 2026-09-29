@@ -23,8 +23,20 @@ add_custom_target(px4_build ALL
 )
 
 install(DIRECTORY
-  ${PX4_BUILD_DIR}/bin ${PX4_BUILD_DIR}/etc etc
+  ${PX4_BUILD_DIR}/bin/
+  DESTINATION share/${PROJECT_NAME}/bin
+  USE_SOURCE_PERMISSIONS
+)
+
+install(DIRECTORY
+  ${PX4_BUILD_DIR}/etc
   DESTINATION share/${PROJECT_NAME}
+)
+
+install(DIRECTORY
+  etc/
+  DESTINATION share/${PROJECT_NAME}/etc
+  USE_SOURCE_PERMISSIONS
 )
 
 ament_environment_hooks(cmake/99_setup.sh.in)

@@ -28,5 +28,28 @@
       <child>rangefinder_link</child>
       <pose relative_to="base_link">0 0 0 0 0 0</pose>
     </joint>
+
+    <!--
+      OGRE1's gpu_lidar returns unstable minimum-range readings. This sensor
+      uses physics raycasts and therefore does not depend on a render engine.
+      The plugin is kept at this model level so it loads after the rangefinder
+      model is merged. Rays are cast from base_link with the sensor pose
+      applied explicitly, avoiding fixed-joint frame ambiguity.
+    -->
+    <plugin
+      filename="clover2-rangefinder-system"
+      name="clover2::sim::RangefinderSystem">
+      <link_name>base_link</link_name>
+      <frame_name>rangefinder_link</frame_name>
+      <pose>0 0 -0.07 0 1.5707 3.1415926</pose>
+      <topic>/rangefinder</topic>
+      <samples>10</samples>
+      <min_angle>-0.0872</min_angle>
+      <max_angle>0.0872</max_angle>
+      <min_range>0.1</min_range>
+      <max_range>30</max_range>
+      <update_rate>10</update_rate>
+      <noise_stddev>0.01</noise_stddev>
+    </plugin>
   </model>
 </sdf>

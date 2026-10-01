@@ -61,6 +61,11 @@
   ros__parameters:
     port: 8081
 
+/**/mavros:
+  ros__parameters:
+    plugin_allowlist:
+      - distance_sensor
+
 /**/mavros/time:
   ros__parameters:
     time_ref_source: "fcu"

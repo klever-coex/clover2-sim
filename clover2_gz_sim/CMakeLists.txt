@@ -22,10 +22,6 @@ install(
   LIBRARY DESTINATION lib
 )
 
-ament_environment_hooks(
-  env-hooks/gz_sim_system_plugin_path.dsv
-)
-
 install(
   DIRECTORY worlds launch models config
   DESTINATION share/${PROJECT_NAME}

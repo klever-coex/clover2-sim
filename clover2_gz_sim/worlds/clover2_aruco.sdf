@@ -34,7 +34,9 @@
     <render_engine>ogre</render_engine>
   </plugin>
 
-    <physics type="dart">
+    <physics type="ignored">
+      <!-- type="ignored" because Gazebo selects the physics engine independently
+        of this attribute https://gazebosim.org/docs/harmonic/sdf_worlds/#physics -->
       <max_step_size>0.004</max_step_size>
       <real_time_factor>1.0</real_time_factor>
       <real_time_update_rate>250</real_time_update_rate>

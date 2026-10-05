@@ -27,5 +27,25 @@
         </geometry>
       </visual>
     </link>
+    <!--
+      Use physics raycasts to avoid OGRE1's unstable gpu_lidar readings.
+      Rays are defined in rangefinder_link's frame; the mounting pose is
+      supplied by the model include.
+    -->
+    <plugin
+      filename="clover2-rangefinder-system"
+      name="clover2::sim::RangefinderSystem">
+      <link_name>rangefinder_link</link_name>
+      <frame_name>rangefinder_link</frame_name>
+      <pose>0 0 0 0 0 0</pose>
+      <topic>/rangefinder</topic>
+      <samples>10</samples>
+      <min_angle>-0.0872</min_angle>
+      <max_angle>0.0872</max_angle>
+      <min_range>0.1</min_range>
+      <max_range>30</max_range>
+      <update_rate>10</update_rate>
+      <noise_stddev>0.01</noise_stddev>
+    </plugin>
   </model>
 </sdf>

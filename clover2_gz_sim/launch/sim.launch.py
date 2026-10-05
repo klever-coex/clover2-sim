@@ -1,11 +1,13 @@
 import os
 
-from ament_index_python.packages import get_package_share_directory
+from ament_index_python.packages import get_package_prefix, get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
     OpaqueFunction,
+    SetEnvironmentVariable,
+    LogInfo,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import (
@@ -18,11 +20,23 @@ from launch_ros.substitutions import FindPackageShare
 
 def launch_gazebo(context, *args, **kwargs):
     pkg_clover2_gz_sim = get_package_share_directory("clover2_gz_sim")
+
+    # Let Gazebo find our rangefinder system plugin installed in the package's lib directory
+    plugin_dir = os.path.join(get_package_prefix("clover2_gz_sim"), "lib")
+    plugin_paths = os.pathsep.join(
+        [plugin_dir, os.environ.get("GZ_SIM_SYSTEM_PLUGIN_PATH", "")]
+    )
+    plugin_path_env = SetEnvironmentVariable("GZ_SIM_SYSTEM_PLUGIN_PATH", plugin_paths)
+
     use_sim_time = LaunchConfiguration("use_sim_time")
     log_level = LaunchConfiguration("log_level")
     world = LaunchConfiguration("world")
     gui = LaunchConfiguration("gui").perform(context)
     render_engine = LaunchConfiguration("render_engine").perform(context)
+
+    log = LogInfo(
+        msg=f"Render engine: {render_engine if render_engine else 'empty (means ogre2)'}"
+    )
 
     gz_args = [
         os.path.join(pkg_clover2_gz_sim, "worlds/"),
@@ -49,7 +63,7 @@ def launch_gazebo(context, *args, **kwargs):
         }.items(),
     )
 
-    return [gazebo_cmd]
+    return [log, plugin_path_env, gazebo_cmd]
 
 
 def generate_launch_description():
@@ -86,7 +100,9 @@ def generate_launch_description():
 
     render_engine_declare = DeclareLaunchArgument(
         "render_engine",
-        default_value=EnvironmentVariable("CLOVER2_GZ_SIM_RENDER_ENGINE", default_value=""),
+        default_value=EnvironmentVariable(
+            "CLOVER2_GZ_SIM_RENDER_ENGINE", default_value=""
+        ),
         description="Gazebo rendering engine override (defaults to Gazebo configuration).",
     )
 

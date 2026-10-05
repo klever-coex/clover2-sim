@@ -57,7 +57,7 @@ def generate_launch_description():
 
     model_declare = DeclareLaunchArgument(
         "model",
-        default_value="x500_mono_cam_down",
+        default_value="x500_mono_cam_down_raycast",
         description="Select sim model.",
     )
 

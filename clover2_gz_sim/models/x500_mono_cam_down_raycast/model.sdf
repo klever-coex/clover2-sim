@@ -1,10 +1,18 @@
-<?xml version="1.0" ?>
-<sdf version="1.6">
-    <model name="rangefinder">
-    <pose>0 0 0 0 0 0</pose>
+<?xml version="1.0" encoding="UTF-8" ?>
+<sdf version='1.9'>
+  <model name='x500_mono_cam_down_raycast'>
     <self_collide>false</self_collide>
-    <static>false</static>
+    <include merge='true'>
+      <uri>x500</uri>
+    </include>
+    <include merge='true'>
+      <uri>model://mono_cam</uri>
+      <pose>0.05 0 -0.07 0 1.5707 3.1415926</pose>
+      <name>mono_cam</name>
+    </include>
+
     <link name="rangefinder_link">
+      <pose relative_to="base_link">0 0 -0.07 0 1.5707 3.1415926</pose>
       <inertial>
         <pose>0 0 0.0435 0 0 0</pose>
         <mass>0.01</mass>
@@ -27,11 +35,8 @@
         </geometry>
       </visual>
     </link>
-    <!--
-      Use physics raycasts to avoid OGRE1's unstable gpu_lidar readings.
-      Rays are defined in rangefinder_link's frame; the mounting pose is
-      supplied by the model include.
-    -->
+
+    <!-- Use physics raycasts for the rangefinder with Ogre1. -->
     <plugin
       filename="clover2-rangefinder-system"
       name="clover2::sim::RangefinderSystem">
@@ -47,5 +52,18 @@
       <update_rate>10</update_rate>
       <noise_stddev>0.01</noise_stddev>
     </plugin>
+
+    <joint name="CameraJoint" type="fixed">
+      <parent>base_link</parent>
+      <child>camera_link</child>
+      <pose relative_to="base_link">0 0 0 0 0 0</pose>
+    </joint>
+
+    <joint name="RangefinderJoint" type="fixed">
+      <parent>base_link</parent>
+      <child>rangefinder_link</child>
+      <pose relative_to="base_link">0 0 0 0 0 0</pose>
+    </joint>
+
   </model>
 </sdf>

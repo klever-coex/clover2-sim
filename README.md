@@ -10,6 +10,13 @@ SITL workspace for [Clover2](https://github.com/klever-coex/clover2) - ROS 2 aut
 > **Warning**
 > ROS 2 Jazzy and Gazebo Harmonic must be installed on the system before building. Or use [clover2-dev](https://github.com/klever-coex/clover2-dev).
 
+## Drone models
+
+- `x500_mono_cam_down`: downward-facing camera and GPU lidar rangefinder for Ogre2.
+- `x500_mono_cam_down_raycast`: downward-facing camera and physics raycast rangefinder for Ogre1. This is the default model in `gz_simple.launch.py`, matching the Ogre1 sensors configuration in `clover2_aruco.sdf`. The rangefinder requires DART's Bullet collision detector, configured in that world.
+
+Select a model with the `model` launch argument. Both rangefinders publish to `/rangefinder`.
+
 ## Tech Stack
 
 | Component | Version                           |

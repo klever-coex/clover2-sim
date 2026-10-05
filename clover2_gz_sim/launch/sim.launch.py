@@ -7,6 +7,7 @@ from launch.actions import (
     IncludeLaunchDescription,
     OpaqueFunction,
     SetEnvironmentVariable,
+    LogInfo,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import (
@@ -31,6 +32,8 @@ def launch_gazebo(context, *args, **kwargs):
     world = LaunchConfiguration("world")
     gui = LaunchConfiguration("gui").perform(context)
     render_engine = LaunchConfiguration("render_engine").perform(context)
+
+    log = LogInfo(msg=f"Render engine: {render_engine if render_engine else "empty (means ogre2)"}")
 
     gz_args = [
         os.path.join(pkg_clover2_gz_sim, "worlds/"),
@@ -57,7 +60,7 @@ def launch_gazebo(context, *args, **kwargs):
         }.items(),
     )
 
-    return [plugin_path_env, gazebo_cmd]
+    return [log, plugin_path_env, gazebo_cmd]
 
 
 def generate_launch_description():

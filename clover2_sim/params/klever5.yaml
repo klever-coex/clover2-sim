@@ -57,6 +57,12 @@
   ros__parameters:
     roi: 256
 
+/**/led_strip:
+  ros__parameters:
+    device_plugin: "simulated"
+    brightness_scale: 0.5
+    led_count: 80
+
 /**/web_video_server:
   ros__parameters:
     port: 8081

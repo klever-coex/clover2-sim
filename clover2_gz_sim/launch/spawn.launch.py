@@ -26,6 +26,7 @@ def generate_launch_description():
     name = LaunchConfiguration("name")
     enable_main_camera = LaunchConfiguration("enable_main_camera")
     enable_front_camera = LaunchConfiguration("enable_front_camera")
+    enable_led_strip = LaunchConfiguration("enable_led_strip")
 
     # Declare arguments
     use_sim_time_declare = DeclareLaunchArgument(
@@ -63,6 +64,11 @@ def generate_launch_description():
             default_value="false",
             choices=["true", "false"],
         ),
+        DeclareLaunchArgument(
+            "enable_led_strip",
+            default_value="false",
+            choices=["true", "false"],
+        ),
     ]
 
     generate_sdf_cmd = ExecuteProcess(
@@ -83,6 +89,8 @@ def generate_launch_description():
                 enable_main_camera,
                 " enable_front_camera:=",
                 enable_front_camera,
+                " enable_led_strip:=",
+                enable_led_strip,
                 " > ",
                 generated_sdf,
             ],

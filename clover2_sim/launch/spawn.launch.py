@@ -28,6 +28,7 @@ def launch_setup(context, *args, **kwargs):
     name = LaunchConfiguration("name")
     enable_main_camera = LaunchConfiguration("enable_main_camera")
     enable_front_camera = LaunchConfiguration("enable_front_camera")
+    enable_led_strip = LaunchConfiguration("enable_led_strip")
 
     spawn_model_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -49,6 +50,7 @@ def launch_setup(context, *args, **kwargs):
             "world": world,
             "enable_main_camera": enable_main_camera,
             "enable_front_camera": enable_front_camera,
+            "enable_led_strip": enable_led_strip,
         }.items(),
     )
 
@@ -71,6 +73,7 @@ def launch_setup(context, *args, **kwargs):
             "sensing_pkg": "clover2_" + sim_type.perform(context) + "_sim",
             "main_camera.enable": enable_main_camera,
             "front_camera.enable": enable_front_camera,
+            "indication.led_strip": enable_led_strip,
         }.items(),
     )
 
@@ -126,6 +129,11 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "enable_front_camera",
+            default_value="false",
+            choices=["true", "false"],
+        ),
+        DeclareLaunchArgument(
+            "enable_led_strip",
             default_value="false",
             choices=["true", "false"],
         ),

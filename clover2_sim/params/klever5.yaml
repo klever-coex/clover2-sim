@@ -59,9 +59,12 @@
 
 /**/led_strip:
   ros__parameters:
-    device_plugin: "simulated"
+    device_plugin: "gz_led_strip"
     brightness_scale: 0.5
     led_count: 80
+    gz_led_strip:
+      topic: "/model/px4/led_strip/frame"
+      max_fps: 30.0
 
 /**/web_video_server:
   ros__parameters:

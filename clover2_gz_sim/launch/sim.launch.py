@@ -6,10 +6,12 @@ from launch import LaunchDescription
 from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
+    SetEnvironmentVariable,
 )
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import (
+    EnvironmentVariable,
     LaunchConfiguration,
     PathJoinSubstitution,
     PythonExpression,
@@ -79,6 +81,15 @@ def generate_launch_description():
         }.items(),
     )
 
+    gz_plugin_path = SetEnvironmentVariable(
+        name="GZ_SIM_SYSTEM_PLUGIN_PATH",
+        value=[
+            os.path.join(pkg_clover2_gz_sim, "lib"),
+            ":",
+            EnvironmentVariable("GZ_SIM_SYSTEM_PLUGIN_PATH", default_value=""),
+        ],
+    )
+
     gz_common_bridge_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution(
@@ -97,6 +108,7 @@ def generate_launch_description():
             # params_file_declare,
             world_declare,
             gui_declare,
+            gz_plugin_path,
             gazebo_cmd,
             gz_common_bridge_cmd,
         ]

@@ -7,7 +7,10 @@ from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
 )
-from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.launch_description_sources import (
+    PythonLaunchDescriptionSource,
+    AnyLaunchDescriptionSource,
+)
 from launch.substitutions import (
     LaunchConfiguration,
     PathJoinSubstitution,
@@ -88,6 +91,24 @@ def generate_launch_description():
         }.items(),
     )
 
+    web_cmd = IncludeLaunchDescription(
+        AnyLaunchDescriptionSource(
+            PathJoinSubstitution(
+                [
+                    get_package_share_directory("clover2_http"),
+                    "launch",
+                    "web_support.launch.xml",
+                ]
+            )
+        ),
+        launch_arguments={
+            "use_sim_time": use_sim_time,
+            "params_file": PathJoinSubstitution(
+                [get_package_share_directory("clover2_http"), "params", "clover2.yaml"]
+            ),
+        }.items(),
+    )
+
     return LaunchDescription(
         [
             use_sim_time_declare,
@@ -98,5 +119,6 @@ def generate_launch_description():
             model_declare,
             sim_cmd,
             spawn_cmd,
+            web_cmd,
         ]
     )

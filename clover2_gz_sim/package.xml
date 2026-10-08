@@ -8,6 +8,7 @@
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
   <exec_depend>clover2_description</exec_depend>
   <exec_depend>launch</exec_depend>
@@ -15,9 +16,12 @@
   <exec_depend>px4_sim</exec_depend>
   <exec_depend>ros_gz_sim</exec_depend>
   <exec_depend>xacro</exec_depend>
+  <depend>clover2_led</depend>
   <depend>gz_plugin_vendor</depend>
+  <depend>gz_msgs_vendor</depend>
   <depend>gz_sim_vendor</depend>
   <depend>gz_transport_vendor</depend>
+  <depend>pluginlib</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

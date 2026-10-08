@@ -59,10 +59,10 @@
 
 /**/led_strip:
   ros__parameters:
-    device_plugin: "gz_led_strip"
+    device_plugin: "led_strip_gz_transport"
     brightness_scale: 0.5
     led_count: 80
-    gz_led_strip:
+    led_strip_gz_transport:
       topic: "/model/px4/led_strip/frame"
       max_fps: 30.0
 

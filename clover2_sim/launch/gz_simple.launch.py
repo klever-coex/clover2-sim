@@ -104,7 +104,7 @@ def generate_launch_description():
         launch_arguments={
             "use_sim_time": use_sim_time,
             "params_file": PathJoinSubstitution(
-                [get_package_share_directory("clover2_http"), "params", "clover2.yaml"]
+                [pkg_clover2_sim, "params", "web.yaml"]
             ),
         }.items(),
     )

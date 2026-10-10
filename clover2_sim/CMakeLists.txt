@@ -8,7 +8,7 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 install(
-  DIRECTORY launch params config schemas
+  DIRECTORY launch params schemas
   DESTINATION share/${PROJECT_NAME}
 )
 

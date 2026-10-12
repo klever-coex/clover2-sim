@@ -148,7 +148,7 @@ public:
         scan.set_vertical_count(1);
 
         for (const auto& result : raycast->Data().results) {
-            double range = m_max_range;
+            double range = m_min_range;
             const bool has_hit =
                 std::isfinite(result.fraction) && result.fraction < 1.0;
             if (has_hit) {

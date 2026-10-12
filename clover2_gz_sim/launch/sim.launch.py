@@ -96,7 +96,7 @@ def generate_launch_description():
         name="GZ_SIM_SYSTEM_PLUGIN_PATH",
         value=[
             os.path.join(pkg_clover2_gz_sim, "lib"),
-            ":",
+            os.pathsep,
             EnvironmentVariable("GZ_SIM_SYSTEM_PLUGIN_PATH", default_value=""),
         ],
     )

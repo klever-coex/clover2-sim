@@ -15,6 +15,17 @@ find_package(gz-transport13 REQUIRED)
 
 ament_auto_find_build_dependencies()
 
+ament_auto_add_library(${PROJECT_NAME}_rangefinder_system SHARED
+  src/rangefinder_system.cpp
+)
+target_compile_features(${PROJECT_NAME}_rangefinder_system PUBLIC cxx_std_17)
+target_link_libraries(${PROJECT_NAME}_rangefinder_system
+  gz-plugin2::gz-plugin2
+  gz-msgs10::gz-msgs10
+  gz-sim8::gz-sim8
+  gz-transport13::gz-transport13
+)
+
 ament_auto_add_library(${PROJECT_NAME}_led_plugins SHARED
   src/led_strip_gz_transport.cpp
 )

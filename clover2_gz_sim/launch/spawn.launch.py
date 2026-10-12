@@ -27,6 +27,7 @@ def generate_launch_description():
     enable_main_camera = LaunchConfiguration("enable_main_camera")
     enable_front_camera = LaunchConfiguration("enable_front_camera")
     enable_led_strip = LaunchConfiguration("enable_led_strip")
+    rangefinder_type = LaunchConfiguration("rangefinder_type")
 
     # Declare arguments
     use_sim_time_declare = DeclareLaunchArgument(
@@ -54,6 +55,12 @@ def generate_launch_description():
         description="Model name.",
     )
     equipment_declare = [
+        DeclareLaunchArgument(
+            "rangefinder_type",
+            default_value="raycast",
+            choices=["raycast", "gpu_lidar"],
+            description="Rangefinder implementation (gpu_lidar requires Ogre2).",
+        ),
         DeclareLaunchArgument(
             "enable_main_camera",
             default_value="true",
@@ -91,6 +98,8 @@ def generate_launch_description():
                 enable_front_camera,
                 " enable_led_strip:=",
                 enable_led_strip,
+                " rangefinder_type:=",
+                rangefinder_type,
                 " > ",
                 generated_sdf,
             ],

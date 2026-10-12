@@ -1,12 +1,15 @@
 #include <gz/common/Console.hh>
-#include <gz/math/Pose3.hh>
+#include <gz/math/Vector3.hh>
 #include <gz/msgs/Utility.hh>
 #include <gz/msgs/laserscan.pb.h>
 #include <gz/plugin/Register.hh>
 #include <gz/sim/EntityComponentManager.hh>
-#include <gz/sim/Model.hh>
 #include <gz/sim/System.hh>
 #include <gz/sim/Util.hh>
+#include <gz/sim/components/CustomSensor.hh>
+#include <gz/sim/components/Link.hh>
+#include <gz/sim/components/ParentEntity.hh>
+#include <gz/sim/components/Pose.hh>
 #include <gz/sim/components/RaycastData.hh>
 #include <gz/transport/Node.hh>
 
@@ -25,16 +28,27 @@ public:
                    const std::shared_ptr<const sdf::Element>& sdf,
                    gz::sim::EntityComponentManager& ecm,
                    gz::sim::EventManager&) override {
-        linkName = sdf->Get<std::string>("link_name", "rangefinder_link").first;
-        frame = sdf->Get<std::string>("frame_name", "rangefinder_link").first;
-        sensorPose =
-            sdf->Get<gz::math::Pose3d>("pose", gz::math::Pose3d::Zero).first;
+        const auto sensor =
+            ecm.Component<gz::sim::components::CustomSensor>(entity);
+        const auto parent =
+            ecm.Component<gz::sim::components::ParentEntity>(entity);
+        const auto pose = ecm.Component<gz::sim::components::Pose>(entity);
+        if (!sensor || !parent || !pose ||
+            !ecm.Component<gz::sim::components::Link>(parent->Data())) {
+            gzerr << "RangefinderSystem must be attached to a custom sensor "
+                     "inside a link\n";
+            return;
+        }
+
+        sensorEntity = entity;
+        frame =
+            sdf->Get<std::string>("frame_name", sensor->Data().Name()).first;
         samples = std::max(1, sdf->Get<int>("samples", 1).first);
         minAngle = sdf->Get<double>("min_angle", 0.0).first;
         maxAngle = sdf->Get<double>("max_angle", 0.0).first;
         minRange = std::max(0.0, sdf->Get<double>("min_range", 0.1).first);
         maxRange = sdf->Get<double>("max_range", 30.0).first;
-        const double updateRate = sdf->Get<double>("update_rate", 10.0).first;
+        const double updateRate = sensor->Data().UpdateRate();
         const double noiseStddev =
             std::max(0.0, sdf->Get<double>("noise_stddev", 0.0).first);
 
@@ -43,18 +57,7 @@ public:
             return;
         }
 
-        const gz::sim::Model model(entity);
-        linkEntity = model.LinkByName(ecm, linkName);
-        if (linkEntity == gz::sim::kNullEntity) {
-            gzerr << "RangefinderSystem could not find link [" << linkName
-                  << "]\n";
-            return;
-        }
-
-        const std::string defaultTopic =
-            gz::sim::topicFromScopedName(linkEntity, ecm, false) +
-            "/sensor/rangefinder/scan";
-        topic = sdf->Get<std::string>("topic", defaultTopic).first;
+        topic = sensor->Data().Topic();
 
         gz::sim::components::RaycastDataInfo raycast;
         raycast.rays.reserve(samples);
@@ -66,21 +69,13 @@ public:
             const double angle = minAngle + ratio * (maxAngle - minAngle);
             const gz::math::Vector3d direction(std::cos(angle), std::sin(angle),
                                                0.0);
+            // Physics transforms these sensor-local rays using the sensor's
+            // world pose, including its parent link's motion.
             raycast.rays.push_back(
-                {sensorPose.Pos() +
-                     sensorPose.Rot().RotateVector(direction * minRange),
-                 sensorPose.Pos() +
-                     sensorPose.Rot().RotateVector(direction * maxRange)});
+                {direction * minRange, direction * maxRange});
         }
-        ecm.CreateComponent(linkEntity,
+        ecm.CreateComponent(sensorEntity,
                             gz::sim::components::RaycastData(raycast));
-
-        publisher = node.Advertise<gz::msgs::LaserScan>(topic);
-        if (!publisher) {
-            gzerr << "RangefinderSystem could not advertise [" << topic
-                  << "]\n";
-            return;
-        }
 
         period =
             std::chrono::duration_cast<std::chrono::steady_clock::duration>(
@@ -91,7 +86,26 @@ public:
 
     void PostUpdate(const gz::sim::UpdateInfo& info,
                     const gz::sim::EntityComponentManager& ecm) override {
-        if (!configured || info.paused) {
+        if (!configured) {
+            return;
+        }
+
+        // During Configure the model may not yet be attached to its world.
+        // Resolve the scoped topic once the complete hierarchy is available.
+        if (!publisher) {
+            if (topic.empty()) {
+                topic = gz::sim::topicFromScopedName(sensorEntity, ecm, false) +
+                        "/scan";
+            }
+            publisher = node.Advertise<gz::msgs::LaserScan>(topic);
+            if (!publisher) {
+                gzerr << "RangefinderSystem could not advertise [" << topic
+                      << "]\n";
+                configured = false;
+                return;
+            }
+        }
+        if (info.paused) {
             return;
         }
 
@@ -103,7 +117,7 @@ public:
         }
 
         const auto raycast =
-            ecm.Component<gz::sim::components::RaycastData>(linkEntity);
+            ecm.Component<gz::sim::components::RaycastData>(sensorEntity);
         if (!raycast || raycast->Data().results.size() !=
                             static_cast<std::size_t>(samples)) {
             return;
@@ -149,14 +163,12 @@ public:
     }
 
 private:
-    gz::sim::Entity linkEntity;
+    gz::sim::Entity sensorEntity{gz::sim::kNullEntity};
     gz::transport::Node node;
     gz::transport::Node::Publisher publisher;
 
-    std::string linkName;
     std::string frame;
     std::string topic;
-    gz::math::Pose3d sensorPose;
 
     int samples;
     double minAngle;

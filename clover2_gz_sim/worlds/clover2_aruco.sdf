@@ -34,10 +34,14 @@
     <render_engine>ogre2</render_engine>
   </plugin>
 
-    <physics type="ode">
+    <physics type="ignored">
       <max_step_size>0.004</max_step_size>
       <real_time_factor>1.0</real_time_factor>
       <real_time_update_rate>250</real_time_update_rate>
+      <dart>
+        <!-- RaycastData requires DART's Bullet collision detector. -->
+        <collision_detector>bullet</collision_detector>
+      </dart>
     </physics>
     <gravity>0 0 -9.8</gravity>
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
@@ -52,16 +56,15 @@
       <static>true</static>
       <link name="link">
         <collision name="collision">
+          <pose>0 0 -0.05 0 0 0</pose>
           <geometry>
-            <plane>
-              <normal>0 0 1</normal>
-              <size>1 1</size>
-            </plane>
+            <!-- The box top stays at z=0; Bullet raycasts need a solid shape. -->
+            <box>
+              <size>100 100 0.1</size>
+            </box>
           </geometry>
           <surface>
-            <friction>
-              <ode />
-            </friction>
+            <friction />
             <bounce />
             <contact />
           </surface>

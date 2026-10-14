@@ -25,8 +25,10 @@ def launch_setup(context, *args, **kwargs):
     params_file = LaunchConfiguration("params_file")
     sim_type = LaunchConfiguration("sim_type")
     world = LaunchConfiguration("world")
-    model = LaunchConfiguration("model")
     name = LaunchConfiguration("name")
+    enable_main_camera = LaunchConfiguration("enable_main_camera")
+    enable_front_camera = LaunchConfiguration("enable_front_camera")
+    enable_led_strip = LaunchConfiguration("enable_led_strip")
 
     spawn_model_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -46,7 +48,9 @@ def launch_setup(context, *args, **kwargs):
             "params_file": params_file,
             "name": name,
             "world": world,
-            "model": model,
+            "enable_main_camera": enable_main_camera,
+            "enable_front_camera": enable_front_camera,
+            "enable_led_strip": enable_led_strip,
         }.items(),
     )
 
@@ -67,6 +71,9 @@ def launch_setup(context, *args, **kwargs):
             "fcu_bridge.fcu_conn": "udp",
             "localization.map_server.map_filename": "simulation.yaml",
             "sensing_pkg": "clover2_" + sim_type.perform(context) + "_sim",
+            "main_camera.enable": enable_main_camera,
+            "front_camera.enable": enable_front_camera,
+            "indication.led_strip": enable_led_strip,
         }.items(),
     )
 
@@ -109,16 +116,28 @@ def generate_launch_description():
         description="Gazebo world.",
     )
 
-    model_declare = DeclareLaunchArgument(
-        "model",
-        description="Select sim model.",
-    )
-
     name_declare = DeclareLaunchArgument(
         "name",
         default_value="px4",
         description="Model name.",
     )
+    equipment_declare = [
+        DeclareLaunchArgument(
+            "enable_main_camera",
+            default_value="true",
+            choices=["true", "false"],
+        ),
+        DeclareLaunchArgument(
+            "enable_front_camera",
+            default_value="false",
+            choices=["true", "false"],
+        ),
+        DeclareLaunchArgument(
+            "enable_led_strip",
+            default_value="false",
+            choices=["true", "false"],
+        ),
+    ]
 
     return LaunchDescription(
         [
@@ -127,8 +146,8 @@ def generate_launch_description():
             params_file_declare,
             sim_type_declare,
             world_declare,
-            model_declare,
             name_declare,
+            *equipment_declare,
             OpaqueFunction(function=launch_setup),
         ]
     )

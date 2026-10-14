@@ -20,22 +20,22 @@ def generate_launch_description():
         description="Name of the ros_gz_bridge node",
     )
 
-    config_file_declare = DeclareLaunchArgument(
-        "config_file",
+    bridge_config_file_declare = DeclareLaunchArgument(
+        "bridge_config_file",
         default_value=pkg_clover2_gz_sim + "/config/gz_common_bridge.yaml",
         description="YAML config file for bridge mappings",
     )
 
     ros_gz_bridge_action = RosGzBridge(
         bridge_name=LaunchConfiguration("bridge_name"),
-        config_file=LaunchConfiguration("config_file"),
+        config_file=LaunchConfiguration("bridge_config_file"),
     )
 
     return LaunchDescription(
         [
             use_sim_time_declare,
             bridge_name_declare,
-            config_file_declare,
+            bridge_config_file_declare,
             ros_gz_bridge_action,
         ]
     )

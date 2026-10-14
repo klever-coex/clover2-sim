@@ -105,7 +105,7 @@
     <include>
       <uri>model://football_map</uri>
       <name>football_map</name>
-      <pose>0 0 -0.03 1.57079632 0 0</pose>
+      <pose>0 0 -0.095 1.57079632 0 0</pose>
     </include>
   </world>
 </sdf>

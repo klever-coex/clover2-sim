@@ -43,7 +43,7 @@
 #     ExposureTime: 1000
 #     FrameDurationLimits: [33333, 33333]
 
-/**/main_camera/feat_detector:
+/**/main_camera/cam_feature:
   ros__parameters:
     feature_plugins: ["aruco"]
     aruco:
@@ -57,9 +57,23 @@
   ros__parameters:
     roi: 256
 
+/**/led_strip:
+  ros__parameters:
+    device_plugin: "led_strip_gz_transport"
+    brightness_scale: 0.5
+    led_count: 80
+    led_strip_gz_transport:
+      topic: "/model/px4/led_strip/frame"
+      max_fps: 30.0
+
 /**/web_video_server:
   ros__parameters:
     port: 8081
+
+/**/mavros:
+  ros__parameters:
+    plugin_allowlist:
+      - distance_sensor
 
 /**/mavros/time:
   ros__parameters:

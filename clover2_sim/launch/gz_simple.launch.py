@@ -23,7 +23,9 @@ def generate_launch_description():
     params_file = LaunchConfiguration("params_file")
     sim_type = LaunchConfiguration("sim_type")
     world = LaunchConfiguration("world")
-    model = LaunchConfiguration("model")
+    enable_main_camera = LaunchConfiguration("enable_main_camera")
+    enable_front_camera = LaunchConfiguration("enable_front_camera")
+    enable_led_strip = LaunchConfiguration("enable_led_strip")
 
     # Declare arguments
     use_sim_time_declare = DeclareLaunchArgument(
@@ -54,12 +56,23 @@ def generate_launch_description():
         default_value="clover2_aruco",
         description="Gazebo world.",
     )
-
-    model_declare = DeclareLaunchArgument(
-        "model",
-        default_value="x500_mono_cam_down",
-        description="Select sim model.",
-    )
+    equipment_declare = [
+        DeclareLaunchArgument(
+            "enable_main_camera",
+            default_value="true",
+            choices=["true", "false"],
+        ),
+        DeclareLaunchArgument(
+            "enable_front_camera",
+            default_value="false",
+            choices=["true", "false"],
+        ),
+        DeclareLaunchArgument(
+            "enable_led_strip",
+            default_value="false",
+            choices=["true", "false"],
+        ),
+    ]
 
     sim_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -84,7 +97,9 @@ def generate_launch_description():
             "params_file": params_file,
             "sim_type": sim_type,
             "world": world,
-            "model": model,
+            "enable_main_camera": enable_main_camera,
+            "enable_front_camera": enable_front_camera,
+            "enable_led_strip": enable_led_strip,
         }.items(),
     )
 
@@ -95,7 +110,7 @@ def generate_launch_description():
             params_file_declare,
             sim_type_declare,
             world_declare,
-            model_declare,
+            *equipment_declare,
             sim_cmd,
             spawn_cmd,
         ]

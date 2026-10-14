@@ -1,0 +1,9 @@
+<class_libraries>
+  <library path="clover2_gz_sim_led_plugins">
+    <class
+      name="led_strip_gz_transport"
+      type="clover2_led::device::led_strip_gz_transport"
+      base_class_type="clover2_led::device::base_device"
+    />
+  </library>
+</class_libraries>

@@ -6,6 +6,7 @@ from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
     OpaqueFunction,
+    SetEnvironmentVariable,
 )
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import (
@@ -53,6 +54,7 @@ def launch_gazebo(context, *args, **kwargs):
 
 
 def generate_launch_description():
+    pkg_clover2_gz_sim = get_package_share_directory("clover2_gz_sim")
     use_sim_time = LaunchConfiguration("use_sim_time")
 
     # Declare arguments
@@ -90,6 +92,15 @@ def generate_launch_description():
         description="Gazebo rendering engine override (defaults to Gazebo configuration).",
     )
 
+    gz_plugin_path = SetEnvironmentVariable(
+        name="GZ_SIM_SYSTEM_PLUGIN_PATH",
+        value=[
+            os.path.join(pkg_clover2_gz_sim, "lib"),
+            ":",
+            EnvironmentVariable("GZ_SIM_SYSTEM_PLUGIN_PATH", default_value=""),
+        ],
+    )
+
     gz_common_bridge_cmd = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             PathJoinSubstitution(
@@ -109,6 +120,7 @@ def generate_launch_description():
             world_declare,
             gui_declare,
             render_engine_declare,
+            gz_plugin_path,
             OpaqueFunction(function=launch_gazebo),
             gz_common_bridge_cmd,
         ]

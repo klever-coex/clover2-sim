@@ -19,7 +19,6 @@ if(EXISTS "${PX4_PREBUILT_DIR}")
     DIRECTORY
       ${PX4_PREBUILT_DIR}/bin
       ${PX4_PREBUILT_DIR}/etc
-      etc
     DESTINATION share/${PROJECT_NAME}
     USE_SOURCE_PERMISSIONS
   )
@@ -35,14 +34,21 @@ elseif(EXISTS "${PX4_SOURCE_DIR}/Makefile" AND
   )
 
   install(DIRECTORY
-    ${PX4_BUILD_DIR}/bin ${PX4_BUILD_DIR}/etc etc
+    ${PX4_BUILD_DIR}/bin ${PX4_BUILD_DIR}/etc
     DESTINATION share/${PROJECT_NAME}
+    USE_SOURCE_PERMISSIONS
   )
 else()
   message(FATAL_ERROR
     "PX4 not found: provide ${PX4_PREBUILT_DIR} or init ${PX4_SOURCE_DIR} submodule"
   )
 endif()
+
+install(DIRECTORY
+  etc/
+  DESTINATION share/${PROJECT_NAME}/etc
+  USE_SOURCE_PERMISSIONS
+)
 
 ament_environment_hooks(cmake/99_setup.sh.in)
 

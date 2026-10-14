@@ -19,8 +19,8 @@
 
     <arg name="world_name" default="clover2_aruco" description="Gazebo world name" />
     <arg name="model_name" default="px4" description="Model name in Gazebo" />
-    <arg name="camera_link" default="camera_link" description="Link carrying the camera sensor in the SDF model" />
-    <arg name="camera_sensor" default="imager" description="Camera sensor name in the SDF model" />
+    <arg name="camera_link" default="base_link" description="Link carrying the main-camera sensor in the Klever5 SDF model" />
+    <arg name="camera_sensor" default="main_camera" description="Main-camera sensor name in the Klever5 SDF model" />
     <arg name="use_sim_time" default="true" description="Use simulation (Gazebo) clock" />
 
     <let

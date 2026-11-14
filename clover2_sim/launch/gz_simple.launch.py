@@ -7,11 +7,14 @@ from launch.actions import (
     DeclareLaunchArgument,
     IncludeLaunchDescription,
 )
+from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import (
     LaunchConfiguration,
     PathJoinSubstitution,
 )
+from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterFile
 
 
 def generate_launch_description():
@@ -26,6 +29,7 @@ def generate_launch_description():
     enable_main_camera = LaunchConfiguration("enable_main_camera")
     enable_front_camera = LaunchConfiguration("enable_front_camera")
     enable_led_strip = LaunchConfiguration("enable_led_strip")
+    enable_web_video_server = LaunchConfiguration("enable_web_video_server")
 
     # Declare arguments
     use_sim_time_declare = DeclareLaunchArgument(
@@ -55,6 +59,12 @@ def generate_launch_description():
         "world",
         default_value="clover2_aruco",
         description="Gazebo world.",
+    )
+    enable_web_video_server_declare = DeclareLaunchArgument(
+        "enable_web_video_server",
+        default_value="true",
+        choices=["true", "false"],
+        description="Launch the web video server",
     )
     equipment_declare = [
         DeclareLaunchArgument(
@@ -103,6 +113,17 @@ def generate_launch_description():
         }.items(),
     )
 
+    web_video_server_cmd = Node(
+        condition=IfCondition(enable_web_video_server),
+        package="web_video_server",
+        executable="web_video_server",
+        name="web_video_server",
+        parameters=[
+            {"use_sim_time": use_sim_time},
+            ParameterFile(params_file, allow_substs=True),
+        ],
+    )
+
     return LaunchDescription(
         [
             use_sim_time_declare,
@@ -110,8 +131,10 @@ def generate_launch_description():
             params_file_declare,
             sim_type_declare,
             world_declare,
+            enable_web_video_server_declare,
             *equipment_declare,
             sim_cmd,
             spawn_cmd,
+            web_video_server_cmd,
         ]
     )

@@ -11,3 +11,5 @@
 
 *.pyc
 __pycache__
+
+px4_sim/prebuilt/

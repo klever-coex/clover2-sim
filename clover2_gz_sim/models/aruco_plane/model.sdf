@@ -5,6 +5,7 @@
 
     <link name="link">
       <visual name="aruco_box">
+        <pose>-1.5 -1.5 0 0 0 0</pose>
         <geometry>
           <box>
             <size>3.4 3.4 0.05</size>
